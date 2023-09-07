@@ -113,4 +113,8 @@ error_with_msg "Slurm partitions failed to start successfully."
 
 echo "- Cluster is now available"
 
-exec "$@"
+echo "start Nginx"
+
+/usr/sbin/nginx -g "daemon off;"
+
+# exec "$@"

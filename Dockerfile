@@ -54,6 +54,7 @@ RUN set -ex \
         vim-enhanced \
         xz-devel \
         zlib-devel http-parser-devel json-c-devel libjwt-devel libyaml-devel \
+        nginx \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -77,7 +78,7 @@ RUN chmod +x /tini
 
 # Install OpenSSL1.1.1
 # See PEP 644: https://www.python.org/dev/peps/pep-0644/
-ARG OPENSSL_VERSION="1.1.1l"
+ARG OPENSSL_VERSION="1.1.1s"
 RUN set -ex \
     && wget --quiet https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz \
     && tar xzf openssl-${OPENSSL_VERSION}.tar.gz \
@@ -150,6 +151,9 @@ RUN chmod 0600 /etc/slurm/slurmdbd.conf
 VOLUME ["/var/lib/mysql", "/var/lib/slurmd", "/var/spool/slurm", "/var/log/slurm"]
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Copy Nginx Config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 ENTRYPOINT ["/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/bin/bash"]
