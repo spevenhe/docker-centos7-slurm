@@ -1,0 +1,72 @@
+diff --git a/cpuid_x86.c b/cpuid_x86.c
+index 4ac1de04..f89b024b 100644
+--- a/cpuid_x86.c
++++ b/cpuid_x86.c
+@@ -1984,6 +1984,8 @@ int get_coretype(void){
+
+   vendor = get_vendor();
+
++  //printf("family=%d\t, exmodel=%d\t, model=%d\n", family, exmodel, model);
++
+   if (vendor == VENDOR_INTEL){
+     switch (family) {
+     case  4:
+@@ -2140,6 +2142,7 @@ int get_coretype(void){
+         break;
+
+       case 5:
++
+         switch (model) {
+ 	case 6:
+ 	  //broadwell
+@@ -2264,15 +2267,25 @@ int get_coretype(void){
+ 	}
+         if (model == 15) { // Sapphire Rapids
+ 	  if(support_avx512_bf16())
++	  {
+             return CPUTYPE_COOPERLAKE;	
+-          if(support_avx512())
++	  }
++          if(support_avx512()) {
++            printf("support_avx512\n");
+             return CPUTYPE_SKYLAKEX;
+-          if(support_avx2())
++	  }
++          if(support_avx2()) {
++            printf("support_avx2\n");
+             return CPUTYPE_HASWELL;
+-          if(support_avx())
++	  }
++          if(support_avx()) {
++            printf("support_avx\n");
+ 	    return CPUTYPE_SANDYBRIDGE;
+-	  else
+-	  return CPUTYPE_NEHALEM;	
++	  }
++	  else {
++            printf("support_none\n");
++	    return CPUTYPE_NEHALEM;
++	  }
+         }
+       break;
+
+@@ -2599,11 +2612,17 @@ void get_subdirname(void){
+ }
+
+ char *get_corename(void){
+-  return corename[get_coretype()];
++   if (get_coretype() == 54)
++      return "COOPERLAKE";
++   else 
++      return corename[get_coretype()];
+ }
+
+ void get_libname(void){
+-  printf("%s",   corename_lower[get_coretype()]);
++   if (get_coretype() == 54)
++      printf("cooperlake");
++   else
++      printf("%s",   corename_lower[get_coretype()]);
+ }
+
+ /* This if for Makefile */
